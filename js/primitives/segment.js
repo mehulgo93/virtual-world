@@ -4,6 +4,14 @@ class Segment {
         this.p2 = p2;
 
     }
+
+    equals(s) {
+        return this.includes(s.p1) && this.includes(s.p2);
+    }
+
+    includes(point) {
+        return this.p1.equals(point) || this.p2.equals(point);
+    }
     draw(ctx, width = 2, color = "black") {
         ctx.beginPath();
         ctx.lineWidth = width;
