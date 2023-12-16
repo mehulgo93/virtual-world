@@ -16,13 +16,26 @@
         <div id="controls">
             <button onclick="dispose()">🗑️</button>
             <button onclick="save()">💾</button>
+            &nbsp;
+            <button id="graphBtn" onclick="setMode('graph')" >🌐</button>
+            <button id="stopBtn" onclick="setMode('stop')">🛑</button>
+            <button id="crossingBtn" onClick="setMode('crossing')">🚶</button>
+            <button id="parkingBtn" onclick="setMode('parking')">🅿️</button>
+            <button id="lightBtn" onclick="setMode('light')">🚦</button>
+            <button id="startBtn" onclick="setMode('start')">🚙</button>
+            <button id="targetBtn" onclick="setMode('target')">🎯</button>
+
         </div>
         <script src="js/world.js"></script>
-        <script src="js/graphEditor.js"></script>
         <script src="js/viewport.js"></script>
+        <script src="js/markings/stop.js"></script>
+        <script src="js/markings/crossing.js"></script>
+        <script src="js/editors/graphEditor.js"></script>
+        <script src="js/editors/stopEditor.js"></script>
+        <script src="js/editors/crossingEditor.js"></script>
         <script src="js/items/tree.js"></script>
         <script src="js/items/building.js"></script>
-        <script src="js/math/utils.js"></script>
+        <script src="js/math/utils.js"></script> 
         <script src="js/math/graph.js"></script>
         <script src="js/primitives/point.js"></script>
         <script src="js/primitives/segment.js"></script>
@@ -38,10 +51,17 @@
             const graphInfo = graphString ? JSON.parse(graphString) : null;
             const graph = graphInfo ? Graph.load(graphInfo) : new Graph();
             const world = new World(graph);
+
             const viewport = new Viewport(mycanvas);
             const graphEditor = new GraphEditor(viewport, graph);
+            const stopEditor = new StopEditor(viewport, world);
+            const crossingEditor = new CrossingEditor(viewport, world);
+
 
             let oldGraphHash = graph.hash();
+
+            setMode("graph");
+
             animate();
 
             function animate() {
@@ -54,15 +74,49 @@
                 world.draw(ctx, viewPoint);
                 ctx.globalAlpha = 0.3;
                 graphEditor.display();
+                stopEditor.display();
+                crossingEditor.display();
                 requestAnimationFrame(animate);
             }
 
             function dispose() {
                 graphEditor.dispose();
+                world.markings.length = 0;
             }
 
             function save() {
                 localStorage.setItem("graph", JSON.stringify(graph));
+            }
+            function setMode(mode) {
+                dissableEditors();
+                switch (mode) {
+                    case "graph":
+                    graphBtn.style.backgroundColor = "white";
+                    graphBtn.style.filter = "";
+                    graphEditor.enable();
+                    break;
+                    case "stop":
+                        stopBtn.style.backgroundColor = "white";
+                        stopBtn.style.filter = "";
+                        stopEditor.enable();
+                    break;
+                    case "crossing":
+                        crossingBtn.style.backgroundColor = "white";
+                        crossingBtn.style.filter = "";
+                        crossingEditor.enable();
+                    break;
+                }
+            }
+            function dissableEditors() {
+                graphBtn.style.backgroundColor = "gray";
+                graphBtn.style.filter = "grayscale(100%)";
+                graphEditor.disable();
+                stopBtn.style.backgroundColor = "gray";
+                stopBtn.style.filter = "grayscale(100%)";
+                stopEditor.disable();
+                crossingBtn.style.backgroundColor = "gray";
+                crossingBtn.style.filter = "grayscale(100%)";
+                crossingEditor.disable();
             }
         </script>
     </body>
