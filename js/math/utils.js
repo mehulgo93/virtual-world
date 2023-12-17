@@ -53,12 +53,18 @@ function magnitude(p) {
     return Math.hypot(p.x, p.y);
 }
 
+function perpendicular(p) {
+    return new Point(-p.y, p.x);
+}
+
 function translate(loc, angle, offset) {
     return new Point(
         loc.x + Math.cos(angle) * offset,
         loc.y + Math.sin(angle) * offset
     );
 }
+
+
 
 function angle(p) {
     return Math.atan2(p.y, p.x);
